@@ -1,0 +1,73 @@
+const Web3 = require('web3');
+
+// 连接到以太坊节点
+const web3 = new Web3('https://mainnet.infura.io/v3/your_infura_project_id');
+
+// 设置私钥和地址
+const privateKey = '0xYourPrivateKey';
+const fromAddress = '0xYourAddress';
+
+// 目标地址
+const toAddress = '0xRecipientAddress';
+
+// 查询账户余额
+async function getBalance(address) {
+    try {
+        const balance = await web3.eth.getBalance(address);
+        return web3.utils.toBN(balance);
+    } catch (error) {
+        console.error('Error occurred while getting balance:', error);
+        throw error;
+    }
+}
+
+// 发送交易
+async function sendTransaction(from, to, privateKey, amount) {
+    try {
+        const nonce = await web3.eth.getTransactionCount(from);
+        const gasPrice = await web3.eth.getGasPrice();
+        const gasLimit = 21000;
+
+        const rawTransaction = {
+            from: from,
+            to: to,
+            value: amount,
+            gasPrice: gasPrice,
+            gas: gasLimit,
+            nonce: nonce,
+        };
+
+        const signedTx = await web3.eth.accounts.signTransaction(rawTransaction, privateKey);
+        const receipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+
+        console.log('Transaction hash:', receipt.transactionHash);
+        return receipt.transactionHash;
+    } catch (error) {
+        console.error('Error occurred while sending transaction:', error);
+        throw error;
+    }
+}
+
+// 归集函数
+async function collectEth() {
+    try {
+        // 查询余额
+        const balance = await getBalance(fromAddress);
+        console.log('Balance:', web3.utils.fromWei(balance, 'ether'), 'ETH');
+
+        // 如果余额小于某个阈值，则不进行转账
+        if (balance.lte(web3.utils.toBN(web3.utils.toWei('0.1', 'ether')))) {
+            console.log('Balance is too low for transfer');
+            return;
+        }
+
+        // 发送交易
+        const txHash = await sendTransaction(fromAddress, toAddress, privateKey, balance);
+        console.log('Transaction sent:', txHash);
+    } catch (error) {
+        console.error('Error occurred:', error);
+    }
+}
+
+// 调用归集函数
+collectEth();
