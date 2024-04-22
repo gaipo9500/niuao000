@@ -1,0 +1,39 @@
+import org.polygonlib.Wallet;
+import org.polygonlib.Web3;
+import org.polygonlib.tx.Transfer;
+import org.polygonlib.tx.TransferEvent;
+
+public class MaticTransfer {
+
+    public static void main(String[] args) {
+        // 连接到 Polygon 网络
+        Web3 web3 = Web3.build("https://rpc-mainnet.matic.network");
+
+        // 发送方钱包地址和私钥
+        String senderAddress = "sender_address";
+        String privateKey = "sender_private_key";
+
+        // 接收方地址
+        String receiverAddress = "receiver_address";
+
+        // 转账金额（以 MATIC 为单位）
+        double amount = 1.0; // 1 MATIC
+
+        // 创建钱包对象
+        Wallet wallet = new Wallet(privateKey);
+
+        // 执行转账操作
+        Transfer.transferMatic(web3, senderAddress, receiverAddress, amount, wallet,
+            new TransferEvent() {
+                @Override
+                public void onEvent(String transactionHash) {
+                    System.out.println("Transaction Hash: " + transactionHash);
+                }
+
+                @Override
+                public void onError(String error) {
+                    System.out.println("Error: " + error);
+                }
+            });
+    }
+}
