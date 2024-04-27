@@ -1,0 +1,11 @@
+from web3 import Web3
+
+# 连接到 Avalanche 的 C-Chain 节点
+avax_rpc_url = "https://api.avax.network/ext/bc/C/rpc"
+web3 = Web3(Web3.HTTPProvider(avax_rpc_url))
+
+# 检查连接状态
+if web3.isConnected():
+    print("成功连接到 Avalanche 节点")
+else:
+    print("无法连接到 Avalanche 节点")
