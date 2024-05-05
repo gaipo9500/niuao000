@@ -1,0 +1,29 @@
+import ezdxf
+from ezdxf import units
+
+# 创建一个新的 DXF 文档
+doc = ezdxf.new("R2010")
+doc.units = units.MM  # 设置单位为毫米
+
+# 获取模型空间
+msp = doc.modelspace()
+
+# 房屋总长和总宽
+house_length = 13000  # 13米
+house_width = 10000   # 10米
+
+# 墙厚
+wall_thickness = 200  # 200毫米
+
+# 房间划分
+# 主卧
+msp.add_lwpolyline([(0, 0), (5000, 0), (5000, 4000), (0, 4000), (0, 0)], dxfattribs={"closed": True})
+msp.add_text("主卧", dxfattribs={"height": 200}).set_pos((2500, 2000), align='CENTER')
+
+# 次卧
+msp.add_lwpolyline([(5000, 0), (9000, 0), (9000, 4000), (5000, 4000), (5000, 0)], dxfattribs={"closed": True})
+msp.add_text("次卧", dxfattribs={"height": 200}).set_pos((7000, 2000), align='CENTER')
+
+# 客厅
+msp.add_lwpolyline([(0, 4000), (5000, 4000), (5000, 8000), (0, 8000), (0, 4000)], dxfattribs={"closed": True})
+msp.add_text("客厅", dxfattribs={"height": 200}).set_pos((2500, 6000), align
